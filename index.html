@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <title>拼圖遊戲</title>
+  <style>
+    #puzzle-div {
+      width: 650px;
+      height: 604px;
+    }
+
+    .bg {
+      width: 150px;
+      height: 150px;
+      background: url(11.jpeg);
+      
+    }
+
+    .control-bg {
+      width: 150px;
+      height: 150px;
+      background: powderblue;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container text-center mt-3" id="puzzle-div"></div>
+
+  <!--<a href="#" class="btn control-bg overflow-hidden " role="button"></a>
+  <a href="#" class="btn bg overflow-hidden" role="button" style="background-position: -150px 0px;"></a>
+  <a href="#" class="btn bg overflow-hidden" role="button" style="background-position: -300px 0px;"></a>
+  <a href="#" class="btn bg overflow-hidden" role="button" style="background-position: -450px 0px;"></a>
+  <br />
+
+  <a href="#" class="btn bg overflow-hidden mt-1" role="button" style="background-position: 0px -150px;"></a>
+  <a href="#" class="btn bg overflow-hidden mt-1" role="button" style="background-position: -150px -150px;"></a>
+  <a href="#" class="btn bg overflow-hidden mt-1" role="button" style="background-position: -300px -150px;"></a>
+  <a href="#" class="btn bg overflow-hidden mt-1" role="button" style="background-position: -450px -150px;"></a>
+  <br />
+  <a href="#" class="btn bg overflow-hidden mt-1" role="button" style="background-position: 0px -300px;"></a>
+  <a href="#" class="btn bg overflow-hidden mt-1" role="button" style="background-position: -150px -300px;"></a>
+  <a href="#" class="btn bg overflow-hidden mt-1" role="button" style="background-position: -300px -300px;"></a>
+  <a href="#" class="btn bg overflow-hidden mt-1" role="button" style="background-position: -450px -300px;"></a>
+  <br />
+  <a href="#" class="btn bg overflow-hidden mt-1" role="button" style="background-position: 0px -450px;"></a>
+  <a href="#" class="btn bg overflow-hidden mt-1" role="button" style="background-position: -150px -450px;"></a>
+  <a href="#" class="btn bg overflow-hidden mt-1" role="button" style="background-position: -300px -450px;"></a>
+  <a href="#" class="btn bg overflow-hidden mt-1" role="button" style="background-position: -450px -450px;"></a>
+  <br />-->
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script>
+    $(function () {
+      var ansPuz = [];
+      var nowPuz = [];
+
+      setPuzzle();
+      console.log("ansPuz=" + ansPuz);
+
+      $("#puzzle-div").on("click", "a", function (e) {
+        e.preventDefault();
+        moveWhere($(this).attr("id"));
+        isEnd();
+
+      });
+      $("#puzzle-div").on("click", "#start", function () {
+        randomPuz();
+        $("#answer").removeAttr("disabled");
+      });
+      $("#puzzle-div").on("click", "#answer", function () {
+        setPuzzle();
+      });
+
+
+      function setPuzzle() {
+        var count = 0;
+        ansPuz = [];
+        nowPuz = [];
+
+        $("#puzzle-div").html("");
+        //填入16張圖
+        for (var i = 0; i < 4; i++) {
+          for (var j = 0; j < 4; j++) {
+
+            $("#puzzle-div")
+              .append('<a href="#" id="puzzle' + count + '"class="btn bg overflow-hidden mt-1 mr-1" role="button" style="background-position: ' + j * -150 + 'px ' + i * -150 + 'px;"></a>');
+            ansPuz.push("puzzle" + count);
+            nowPuz.push("puzzle" + count);
+
+            count++;
+          }
+        }
+        $("#puzzle-div").append('<button id="start" type="button" class="btn btn-outline-primary mt-3 w-100">洗牌</button>');
+        $("#puzzle-div").append('<button id="answer" type="button" class="btn btn-outline-secondary my-2 w-100" disabled>解答</button>');
+        $("#puzzle0").removeClass("bg");
+        $("#puzzle0").addClass("control-bg disabled");
+      }
+
+      function randomPuz() {
+        
+        var round = Math.floor(Math.random() * $("#puzzle-div a").length) + $("#puzzle-div a").length;
+        console.log("round=" + round);
+
+        while (round > 0) {
+
+          var randomNum = Math.floor(Math.random() * $("#puzzle-div a").length);
+
+          if (round % 16 != randomNum) {
+            console.log("randomNum=" + randomNum);
+            var $clon = $("#puzzle-div a").eq(randomNum).clone();
+            $("#puzzle-div a").eq(randomNum).replaceWith($("#puzzle-div a").eq(round % 16));
+
+            $("#puzzle-div a").eq((round % 16) - 1).after($clon);
+            round--;
+          }
+        }
+        updateNow();
+      }
+      function updateNow() {
+        nowPuz = [];
+        var $puzzles = $("#puzzle-div a");
+        for (var i = 0; i < $puzzles.length; i++) {
+          nowPuz.push($puzzles[i].getAttribute("id"));
+        }
+      }
+
+      function isEnd() {
+        if (nowPuz.toString() == ansPuz.toString()) {
+          alert("GG!");
+          setPuzzle();
+        }
+      }
+
+      function moveWhere(clickId){
+        var puzpowderblue = nowPuz.indexOf("puzzle0");
+        var wantMove = nowPuz.indexOf(clickId);
+        var canMove = [];
+
+        if(puzpowderblue - 4 >= 0){//下
+          canMove.push(puzpowderblue -4);
+        }else{canMove.push(-1);}
+        if(puzpowderblue +4 <16){//上
+          canMove.push(puzpowderblue +4);
+        }else{canMove.push(-1);}
+        if(puzpowderblue % 4 >0){//左
+          canMove.push(puzpowderblue -1);
+        }else{canMove.push(-1);}
+        if(puzpowderblue %4 <3){//右
+          canMove.push(puzpowderblue +1);
+        }else{canMove.push(-1);}
+
+        if(canMove.indexOf(wantMove) != -1){
+          console.log("move(puzpowderblue,wantMove="+ puzpowderblue+","+wantMove);
+          move(puzpowderblue,wantMove);
+          updateNow();
+        }
+
+      }
+
+      function move(previous, next) {
+                var $clon = $("#puzzle-div a").eq(previous).clone();
+                $("#puzzle-div a").eq(previous).replaceWith($("#puzzle-div a").eq(next));
+                if(next==0){
+                    $("#puzzle-div a").eq(next).before($clon);
+
+                }else{
+                    $("#puzzle-div a").eq((next) - 1).after($clon);
+                }
+
+            }
+
+    });
+
+
+  </script>
+
+
+</body>
+
+</html>
